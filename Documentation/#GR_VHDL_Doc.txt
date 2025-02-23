@@ -1,0 +1,532 @@
+***********************************************************************
+	
+	ΠΑΝΕΠΙΣΤΗΜΙΟ ΔΥΤΙΚΗΣ ΑΤΤΙΚΗΣ
+	ΤΜΗΜΑ ΜΗΧΑΝΙΚΩΝ ΠΛΗΡΟΦΟΡΙΚΗΣ ΚΑΙ ΥΠΟΛΟΓΙΣΤΩΝ
+	ΕΡΓΑΣΤΗΡΙΟ ΣΧΕΔΙΑΣΗ ΨΗΦΙΑΚΩΝ ΣΥΣΤΗΜΑΤΩΝ
+	
+	2η Εργαστηριακή Άσκηση : Γνωριμία με το περιβάλλον προσομοίωσης
+	
+	Ονοματεπώνυμο : Αθανασίου Βασίλειος Ευάγγελος
+	Αριθμός Μητρώου : 19390005
+	Εξάμηνο Φοιτητή : 8ο
+	Πρόγραμμα Σπουδών : ΠΑΔΑ
+	Τμήμα Εργαστηρίου : Τμήμα 1 Τετάρτη 17:00 - 19:00
+	Υπεύθυνος Εργαστηρίου : Μηλιδώνης Αθανάσιος
+	Ημερομηνία Παράδοσης : 3/5/2023
+
+***********************************************************************
+
+1. Γνωριμία με το εργαλείο (1)
+Ακολουθώντας τις οδηγίες του αρχείου «Προσομοίωση στο εργαλείο Modelsim Altera Starter edition 
+6_uniwa» (Μέρος Α) υλοποιήστε και προσομοιώστε ένα κύκλωμα πολυπλέκτη 2-σε-1
+
+_____________________________________________ mux_1.vhd _____________________________________________
+-- Κώδικας του πολυπλέκτη 2-σε-1
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY mux2to1 IS 
+    PORT(
+          a, b, s : IN bit;
+          c       : OUT bit);
+END mux2to1;
+
+ARCHITECTURE dataflow OF mux2to1 IS 
+BEGIN
+    c <= a WHEN s = '1' ELSE b;
+END dataflow;
+
+---------------------------------------------------------------------------------------------------
+2. Γνωριμία με το εργαλείο (2)
+Ακολουθώντας τις οδηγίες του αρχείου «Προσομοίωση στο εργαλείο Modelsim Altera Starter edition 
+6_uniwa» (Μέρος Β) υλοποιήστε και προσομοιώστε ένα κύκλωμα πολυπλέκτη 2-σε-1 με χρήση testbench
+
+_____________________________________________ mux_tb.vhd _____________________________________________
+-- Testbench κώδικας του πολυπλέκτη 2-σε-1 
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_mux IS
+END test_mux;
+
+ARCHITECTURE test_b OF test_mux IS
+SIGNAL A1, B1, S1, C1: bit;
+
+-- mux_1.vhd
+COMPONENT mux2to1 IS 
+    PORT(
+      a, b, s : IN bit; 
+      c       : OUT bit);
+END COMPONENT;
+
+BEGIN 
+M1: mux2to1 PORT MAP (a => A1, b => B1, s => s1, c => c1);
+PROCESS
+BEGIN
+    A1 <= '1'; B1 <= '0'; S1 <= '1'; wait for 20 ps;
+    A1 <= '1'; B1 <= '0'; S1 <= '0'; wait for 20 ps;
+END PROCESS;
+END test_b;
+
+---------------------------------------------------------------------------------------------------
+3. Τριπλός πολυπλέκτης 2-σε-1
+Υλοποιήστε κύκλωμα τριπλού πολυπλέκτη 2-σε-1, ο οποίος παίρνει δύο 3-bit εισόδους a και b, μία είσοδο 
+επιλογής s και δίνει στην έξοδο ένα 3-bit σήμα d, ανάλογα με το εάν η είσοδος s είναι 1 ή 0.
+Χρησιμοποιώντας tb που θα αναπτύξετε για το σκοπό αυτό
+
+_____________________________________________ mux_double_2to1.vhd _____________________________________________
+-- Κώδικας πολυπλέκτη 2-σε-1
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY mux_double_2to1 IS 
+    PORT(
+          a, b  : IN std_logic_vector(2 DOWNTO 0);
+          s     : IN std_logic;
+          d     : OUT std_logic_vector(2 DOWNTO 0));
+END mux_double_2to1;
+
+ARCHITECTURE dataflow OF mux_double_2to1 IS 
+BEGIN
+    d <= a WHEN s = '1' ELSE b;
+END dataflow;
+
+_____________________________________________ mux_double_2to1_tb.vhd _____________________________________________ 
+-- Testbench κώδικα τριπλού πολυπλέκτη 2-σε-1 
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_mux_double_2to1 IS
+END test_mux_double_2to1;
+
+ARCHITECTURE test_b OF test_mux_double_2to1 IS
+SIGNAL A1, B1, D1 : std_logic_vector(2 DOWNTO 0);
+SIGNAL S1         : std_logic;
+
+-- mux_double_2to1.vhd
+COMPONENT mux_double_2to1 IS 
+    PORT(
+          a, b  : IN std_logic_vector(2 DOWNTO 0); 
+          s     : IN std_logic; 
+          d     : OUT std_logic_vector(2 DOWNTO 0));
+END COMPONENT;
+
+BEGIN 
+M1: mux_double_2to1 PORT MAP (a => A1, b => B1, s => S1, d => D1);
+PROCESS
+BEGIN
+        A1 <= "001"; B1 <= "010"; S1 <= '0'; wait for 20 ps;
+        A1 <= "010"; B1 <= "100"; S1 <= '0'; wait for 20 ps;
+        A1 <= "111"; B1 <= "011"; S1 <= '0'; wait for 20 ps;
+        A1 <= "101"; B1 <= "111"; S1 <= '0'; wait for 20 ps;
+        A1 <= "010"; B1 <= "001"; S1 <= '1'; wait for 20 ps;
+        A1 <= "000"; B1 <= "101"; S1 <= '1'; wait for 20 ps;
+        A1 <= "101"; B1 <= "010"; S1 <= '1'; wait for 20 ps;
+        A1 <= "111"; B1 <= "101"; S1 <= '1'; wait for 20 ps;
+END PROCESS;
+END test_b;
+
+---------------------------------------------------------------------------------------------------
+4. Πολυπλέκτης 4-σε-1 
+Ένας πολυπλέκτης 4-σε-1 παίρνει μια 4-ψήφια είσοδο δεδομένων και μια 2-ψήφια είσοδο ελέγχου και 
+έχει μια μονοψήφια είσοδο η οποία είναι κάποια από τις εισόδους δεδομένων ανάλογα με το συνδυασμό 
+τιμών της εισόδου επιλογής. 
+
+_________________________________________ mux_4to1.vhd _____________________________________________
+-- Κώδικας πολυπλέκτη 4-σε-1
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY mux_4to1 IS 
+    PORT(
+          a  : IN std_logic_vector(4 DOWNTO 1);
+          s  : IN std_logic_vector(2 DOWNTO 1);
+          d  : OUT std_logic);
+END mux_4to1;
+
+ARCHITECTURE dataflow OF mux_4to1 IS 
+BEGIN
+  WITH s SELECT
+    d <= a(1) WHEN "00",
+         a(2) WHEN "01",
+         a(3) WHEN "10",
+         a(4) WHEN OTHERS;
+END dataflow;
+
+_____________________________________________ mux_4to1_tb.vhd _____________________________________________
+-- Testbench κώδικα πολυπλέκτη 4-σε-1 
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_mux_4to1 IS
+END test_mux_4to1;
+
+ARCHITECTURE test_b OF test_mux_4to1 IS
+SIGNAL A1 : std_logic_vector(4 DOWNTO 1);
+SIGNAL S1 : std_logic_vector(2 DOWNTO 1);
+SIGNAL D1 : std_logic;
+
+-- mux_4to1.vhd
+COMPONENT mux_4to1 IS 
+    PORT(
+          a : IN std_logic_vector(4 DOWNTO 1); 
+          s : IN std_logic_vector(2 DOWNTO 1); 
+          d : OUT std_logic);
+END COMPONENT;
+
+BEGIN 
+M1: mux_4to1 PORT MAP (a => A1, s => S1, d => D1);
+PROCESS
+BEGIN
+        A1 <= "0000"; S1 <= "00"; wait for 20 ps;
+        A1 <= "0101"; S1 <= "01"; wait for 20 ps;
+        A1 <= "1010"; S1 <= "10"; wait for 20 ps;
+        A1 <= "1100"; S1 <= "11"; wait for 20 ps;
+END PROCESS;
+END test_b;
+
+---------------------------------------------------------------------------------------------------
+5. Αποκωδικοποιητής 2-σε-4 
+Υλοποιήστε κύκλωμα αποκωδικοποιητή 2-σε-4.
+Υλοποιήστε το κύκλωμα χρησιμοποιώντας μόνο την εντολή <= (με βάση το λογικό κύκλωμα)
+Ελέγξτε το κύκλωμα για τους ακόλουθους συνδυασμούς χρησιμοποιώντας εντολές force
+
+_____________________________________________ dec2to4.vhd _____________________________________________
+-- Κώδικας αποκωδικοποιητή 2-σε-4
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY dec2to4 IS 
+    PORT(
+          a : IN std_logic_vector(2 DOWNTO 1);
+          d : OUT std_logic_vector(4 DOWNTO 1));
+END dec2to4;
+
+ARCHITECTURE dataflow OF dec2to4 IS 
+BEGIN
+  WITH a SELECT
+    d <= "0001" WHEN "00",
+     	   "0010" WHEN "01",
+     	   "0100" WHEN "10",
+     	   "1000" WHEN "11",
+     	   "0000" WHEN OTHERS;
+END dataflow;
+
+---------------------------------------------------------------------------------------------------
+6. Αποκωδικοποιητής 2-σε-4 με επίτρεψη
+Υλοποιήστε κύκλωμα αποκωδικοποιητή 2-σε-4 με επίτρεψη. Αν η είσοδος επίτρεψης είναι 0, όλες οι 
+έξοδοι είναι 0.
+Υλοποιήστε το κύκλωμα χρησιμοποιώντας μόνο την εντολή <= (με βάση το λογικό κύκλωμα)
+
+_____________________________________________ dec2to4.vhd _____________________________________________
+-- Κώδικας αποκωδικοποιητή 2-σε-4 με επίτρεψη
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY dec2to4 IS 
+    PORT(
+          a   : IN std_logic_vector(2 DOWNTO 1);
+          en  : IN std_logic;
+          d   : OUT std_logic_vector(4 DOWNTO 1));
+END dec2to4;
+
+ARCHITECTURE dataflow OF dec2to4 IS
+SIGNAL en_a   : std_logic_vector(3 DOWNTO 1); 
+BEGIN
+  en_a <= en & a;
+  WITH en_a SELECT
+    d <= "0001" WHEN "100",
+     	   "0010" WHEN "101",
+     	   "0100" WHEN "110",
+     	   "1000" WHEN "111",
+     	   "0000" WHEN OTHERS;
+END dataflow;
+
+_____________________________________________ dec2to4_tb.vhd _____________________________________________
+-- Testbench κώδικα αποκωδικοποιητή 2-σε-4 με επίτρεψη 
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_dec2to4 IS
+END test_dec2to4;
+
+ARCHITECTURE test_b OF test_dec2to4 IS
+SIGNAL A1     : std_logic_vector(2 DOWNTO 1);
+SIGNAL EN     : std_logic;
+SIGNAL D1     : std_logic_vector(4 DOWNTO 1);
+
+-- dec2to4.vhd
+COMPONENT dec2to4 IS 
+    PORT(
+          a   : IN std_logic_vector(2 DOWNTO 1); 
+          en  : IN std_logic;
+          d   : OUT std_logic_vector(4 DOWNTO 1)); 
+END COMPONENT;
+
+BEGIN
+M1: dec2to4 PORT MAP (a => A1, en => EN, d => D1);
+PROCESS
+BEGIN
+        A1 <= "00"; EN <= '1'; wait for 20 ps;
+        A1 <= "01"; EN <= '1'; wait for 20 ps;
+        A1 <= "10"; EN <= '1'; wait for 20 ps;
+        A1 <= "11"; EN <= '1'; wait for 20 ps;
+        A1 <= "00"; EN <= '0'; wait for 20 ps;
+        A1 <= "01"; EN <= '0'; wait for 20 ps;
+        A1 <= "10"; EN <= '0'; wait for 20 ps;
+        A1 <= "11"; EN <= '0'; wait for 20 ps;
+END PROCESS;
+END test_b;
+
+---------------------------------------------------------------------------------------------------
+7. Αποκωδικοποιητής 4-σε-16
+Υλοποιήστε κύκλωμα αποκωδικοποιητή 4-σε-16.
+Υλοποιήστε το κύκλωμα χρησιμοποιώντας μόνο την εντολή <= (με βάση το λογικό κύκλωμα)
+
+_____________________________________________ dec_4to16.vhd _____________________________________________
+-- Κώδικας αποκωδικοποιητή 4-σε-16
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY dec_4to16 IS 
+    PORT(
+          a   : IN std_logic_vector(4 DOWNTO 1);
+          d   : OUT std_logic_vector(16 DOWNTO 1));
+END dec_4to16;
+
+ARCHITECTURE dataflow OF dec_4to16 IS
+BEGIN
+  WITH a SELECT
+    d <= "0000000000000001" WHEN "0001",
+     	 "0000000000000010" WHEN "0010",
+     	 "0000000000000100" WHEN "0011",
+     	 "0000000000001000" WHEN "0100",
+     	 "0000000000010000" WHEN "0101",
+     	 "0000000000100000" WHEN "0110",
+		 "0000000001000000" WHEN "0111",
+		 "0000000010000000" WHEN "1000",
+		 "0000000100000000" WHEN "1001",
+		 "0000001000000000" WHEN "1010",  
+		 "0000010000000000" WHEN "1011",  
+		 "0000100000000000" WHEN "1100",  
+		 "0001000000000000" WHEN "1101",  
+		 "0010000000000000" WHEN "1110",
+     	 "0100000000000000" WHEN "1111",
+     	 "0000000000000000" WHEN OTHERS;
+END dataflow;
+
+_____________________________________________ dec_4to16_tb.vhd _____________________________________________
+-- Testbench κώδικα αποκωδικοποιητή 4-σε-16 
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_dec_4to16 IS
+END test_dec_4to16;
+
+ARCHITECTURE test_b OF test_dec_4to16 IS
+SIGNAL A1     : std_logic_vector(4 DOWNTO 1);
+SIGNAL D1     : std_logic_vector(16 DOWNTO 1);
+
+-- dec_4to16.vhd
+COMPONENT dec_4to16 IS 
+    PORT(
+          a   : IN std_logic_vector(4 DOWNTO 1); 
+          d   : OUT std_logic_vector(16 DOWNTO 1)); 
+END COMPONENT;
+
+BEGIN
+M1: dec_4to16 PORT MAP (a => A1, d => D1);
+PROCESS
+BEGIN
+      A1 <= "0001"; wait for 20 ps;
+      A1 <= "0010"; wait for 20 ps;
+      A1 <= "0011"; wait for 20 ps;
+      A1 <= "0100"; wait for 20 ps;
+      A1 <= "0101"; wait for 20 ps;
+      A1 <= "0110"; wait for 20 ps;
+      A1 <= "0111"; wait for 20 ps;
+      A1 <= "1000"; wait for 20 ps;
+      A1 <= "1001"; wait for 20 ps;
+      A1 <= "1010"; wait for 20 ps;
+      A1 <= "1011"; wait for 20 ps;
+      A1 <= "1100"; wait for 20 ps;
+      
+A1<= "1101"; wait for 20 ps;
+      A1 <=
+"1110"; wait for 20 ps;
+      A1 <= "1111"; wait for 20 ps;
+END PROCESS;
+END test_b;
+
+---------------------------------------------------------------------------------------------------
+8. Ημιαθροιστής 
+Υλοποιήστε κύκλωμα ημιαθροιστή.
+
+_____________________________________________ ha.vhd _____________________________________________
+-- Κώδικας ημιαθροιστή
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY ha is
+    PORT(
+      A, B  : IN bit;
+      S, C  : OUT bit);
+END ha;
+
+ARCHITECTURE dataflow OF ha IS
+BEGIN
+  S <= A XOR B;
+  C <= A AND B;
+END dataflow;
+
+_____________________________________________ ha_tb.vhd _____________________________________________
+-- Testbench κώδικα ημιαθροιστή
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_ha IS
+END test_ha;
+
+ARCHITECTURE test_b OF test_ha IS
+SIGNAL A1, B1, C1, S1 : bit;
+
+-- ha.vhd
+COMPONENT ha IS
+  PORT(
+        a, b : IN bit;
+        c, s : OUT bit);
+END COMPONENT;
+
+BEGIN
+M1: ha PORT MAP (a => A1, b => B1, c => C1, s => S1);
+PROCESS
+BEGIN
+      A1 <= '0'; B1 <= '0'; wait for 20 ps;
+      A1 <= '0'; B1 <= '1'; wait for 20 ps;
+      A1 <= '1'; B1 <= '0'; wait for 20 ps;
+      A1 <= '1'; B1 <= '1'; wait for 20 ps;
+END PROCESS;
+END test_b;
+
+---------------------------------------------------------------------------------------------------
+9. Πλήρης αθροιστής
+Υλοποιήστε κύκλωμα πλήρους αθροιστή.
+
+_____________________________________________ fa.vhd _____________________________________________
+-- Κώδικας πλήρους αθροιστή
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY fa is
+    PORT(
+      A, B, Cin   : IN bit;
+      S, Cout     : OUT bit);
+END fa;
+
+ARCHITECTURE dataflow OF fa IS
+SIGNAL xor_AB     : bit;
+SIGNAL and_AB     : bit;
+SIGNAL and_xorAB_Cin : bit;
+BEGIN
+  xor_AB <= A XOR B;
+  S <= xor_AB XOR Cin;
+  and_AB <= A AND B;
+  and_xorAB_Cin <= xor_AB AND Cin;
+  Cout <= and_AB OR and_xorAB_Cin;
+END dataflow;
+
+_____________________________________________ fa_tb.vhd _____________________________________________
+-- Testbench κώδικα πλήρους αθροιστή
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_fa IS
+END test_fa;
+
+ARCHITECTURE test_b OF test_fa IS
+SIGNAL A1, B1, Cin1, Cout1, S1 : bit;
+
+-- fa.vhd
+COMPONENT fa IS
+  PORT(
+        a, b, cin : IN bit;
+        cout, s   : OUT bit);
+END COMPONENT;
+
+BEGIN
+M1: fa PORT MAP (a => A1, b => B1, cin => Cin1, cout => Cout1, s => S1);
+PROCESS
+BEGIN
+      A1 <= '0'; B1 <= '0'; Cin1 <= '0'; wait for 20 ps;
+      A1 <= '0'; B1 <= '0'; Cin1 <= '1'; wait for 20 ps;
+      A1 <= '0'; B1 <= '1'; Cin1 <= '0'; wait for 20 ps;
+      A1 <= '0'; B1 <= '1'; Cin1 <= '1'; wait for 20 ps;
+      A1 <= '0'; B1 <= '1'; Cin1 <= '1'; wait for 20 ps;
+      A1 <= '1'; B1 <= '0'; Cin1 <= '0'; wait for 20 ps;
+      A1 <= '1'; B1 <= '0'; Cin1 <= '1'; wait for 20 ps;
+      A1 <= '1'; B1 <= '1'; Cin1 <= '0'; wait for 20 ps;
+      A1 <= '1'; B1 <= '1'; Cin1 <= '1'; wait for 20 ps;
+END PROCESS;
+END test_b;
+
+---------------------------------------------------------------------------------------------------
+10. Αθροιστής 4 bit
+Υλοποιήστε κύκλωμα αθροιστή 4 bit.
+
+_____________________________________________ adder4.vhd _____________________________________________
+-- Κώδικας αθροιστή 4 bit
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+USE ieee.std_logic_unsigned.all;
+
+ENTITY adder4 IS
+    PORT(
+          Cin   : IN std_logic;
+          X, Y  : IN std_logic_vector(3 DOWNTO 0);
+          S     : OUT std_logic_vector(3 DOWNTO 0);
+          Cout  : OUT std_logic);
+END adder4;
+
+ARCHITECTURE dataflow OF adder4 IS
+SIGNAL Sum : std_logic_vector(4 DOWNTO 0);
+BEGIN
+  Sum <= ('1' & X) + Y + Cin;
+  S <= Sum(3 DOWNTO 0);
+  Cout <= Sum(4);
+END dataflow;
+
+_____________________________________________ adder4_tb.vhd _____________________________________________
+-- Testbench κώδικα αθροιστή 4-bit
+LIBRARY ieee;
+USE ieee.std_logic_1164.all;
+
+ENTITY test_adder4 IS
+END test_adder4;
+
+ARCHITECTURE test_b OF test_adder4 IS
+SIGNAL Cin1   : std_logic;
+SIGNAL X1, Y1 : std_logic_vector(3 DOWNTO 0);
+SIGNAL S1     : std_logic_vector(3 DOWNTO 0);
+SIGNAL Cout1  : std_logic;
+
+-- adder4.vhd
+COMPONENT adder4 IS
+  PORT(
+          cin   : IN std_logic;
+          x, y  : IN std_logic_vector(3 DOWNTO 0);
+          s     : OUT std_logic_vector(3 DOWNTO 0);
+          cout  : OUT std_logic);
+END COMPONENT;
+
+BEGIN
+M1: adder4 PORT MAP (x => X1, y => Y1, cin => Cin1, cout => Cout1, s => S1);
+PROCESS
+BEGIN
+      X1 <= "0000"; Y1 <= "0000"; Cin1 <= '0'; wait for 20 ps;
+      X1 <= "1111"; Y1 <= "1111"; Cin1 <= '0'; wait for 20 ps;
+      X1 <= "1111"; Y1 <= "1111"; Cin1 <= '1'; wait for 20 ps;
+      X1 <= "0011"; Y1 <= "0101"; Cin1 <= '0'; wait for 20 ps; -- 3 + 5
+      X1 <= "0010"; Y1 <= "0011"; Cin1 <= '0'; wait for 20 ps; -- (-2) + 3
+      X1 <= "1000"; Y1 <= "0111"; Cin1 <= '0'; wait for 20 ps; -- (-8) + 7
+END PROCESS;
+END test_b;
