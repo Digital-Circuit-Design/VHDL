@@ -1,4 +1,5 @@
--- Testbench ?????? ??????????????? 4-??-16 
+-- Testbench Decoder 4-to-16 
+
 LIBRARY ieee;
 USE ieee.std_logic_1164.all;
 
@@ -32,8 +33,10 @@ BEGIN
       A1 <= "1010"; wait for 20 ps;
       A1 <= "1011"; wait for 20 ps;
       A1 <= "1100"; wait for 20 ps;
-      A1<= "1101"; wait for 20 ps;
-      A1 <="1110"; wait for 20 ps;
+      
+A1<= "1101"; wait for 20 ps;
+      A1 <=
+"1110"; wait for 20 ps;
       A1 <= "1111"; wait for 20 ps;
 END PROCESS;
 END test_b;
