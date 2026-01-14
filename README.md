@@ -192,24 +192,24 @@ git clone https://github.com/Digital-Circuit-Design/VHDL.git
 1. Open ModelSim
 2. Select File → New → Project
 3. Set:
-  - Project Name (e.g. `VHDL_Lab`)
-  - Project Location (your cloned repository path)
+    - Project Name (e.g. `VHDL_Lab`)
+    - Project Location (your cloned repository path)
 4. Choose Create Project
 
 ### 2. Add VHDL Source Files
 1. In the Add Items to Project window:
-  - Select Add Existing File
+    - Select Add Existing File
 2. Navigate to the `src/` directory
 3. Add:
-  - All `*.vhd` files (designs and testbenches)
+    - All `*.vhd` files (designs and testbenches)
 4. Finish project creation
 
 ### 3. Compile the Project
 1. In the Project tab:
-  - Select Compile → Compile All
+    - Select Compile → Compile All
 2. Ensure:
-  - No syntax errors
-  - Successful compilation messages in the transcript
+    - No syntax errors
+    - Successful compilation messages in the transcript
 
 ---
 
@@ -224,14 +224,14 @@ Example (Half Adder):
 
 ### 2. View Waveforms
 1. In the simulation window:
-  - Add signals to the waveform
+    - Add signals to the waveform
 2. Run simulation:
 ```bash
 run -all
 ```
 3. Verify:
-  - Correct logical behavior
-  - Expected outputs for each test case
+    - Correct logical behavior
+    - Expected outputs for each test case
 
 ---
 
